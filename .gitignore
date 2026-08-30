@@ -3,3 +3,6 @@ obj/
 .vs/
 .idea/
 *.user
+.DS_Store
+xcuserdata/
+*.xcuserstate
