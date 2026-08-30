@@ -9,11 +9,13 @@ internal sealed class ShareableRegionWindowForm : Form
     private readonly CaptureRegion _region;
     private readonly bool _includeCursor;
     private readonly IReadOnlySet<string> _excludedProcesses;
+    private readonly Rect _sourceRectangle;
     private readonly System.Windows.Forms.Timer _refreshTimer;
     private readonly System.Windows.Forms.Timer _filterTimer;
     private HashSet<IntPtr> _filteredWindows = [];
     private IntPtr _magnifier;
     private bool _magnifierInitialized;
+    private bool _filterRefreshInProgress;
     private RegionBorderForm? _regionBorder;
     private bool _showRegionBorder;
 
@@ -23,6 +25,7 @@ internal sealed class ShareableRegionWindowForm : Form
         _region = region;
         _includeCursor = includeCursor;
         _excludedProcesses = excludedProcesses;
+        _sourceRectangle = new Rect(region.X, region.Y, region.X + region.Width, region.Y + region.Height);
         _showRegionBorder = showRegionBorder;
         Text = "Shareable Region Window";
         FormBorderStyle = FormBorderStyle.None;
@@ -33,15 +36,26 @@ internal sealed class ShareableRegionWindowForm : Form
         MinimumSize = new Size(320, 180);
         SetStyle(ControlStyles.ResizeRedraw, true);
 
-        _refreshTimer = new System.Windows.Forms.Timer { Interval = 1000 / 30 };
+        _refreshTimer = new System.Windows.Forms.Timer { Interval = RefreshIntervalMilliseconds };
         _refreshTimer.Tick += (_, _) =>
         {
             if (!RefreshMagnifier()) ShowCaptureError("The selected screen region could not be refreshed.");
         };
         _filterTimer = new System.Windows.Forms.Timer { Interval = 500 };
-        _filterTimer.Tick += (_, _) =>
+        _filterTimer.Tick += async (_, _) =>
         {
-            if (!UpdateWindowFilter()) ShowCaptureError("The process exclusion list could not be refreshed.");
+            if (_filterRefreshInProgress || WindowState == FormWindowState.Minimized) return;
+
+            _filterRefreshInProgress = true;
+            try
+            {
+                if (!await UpdateWindowFilterAsync())
+                    ShowCaptureError("The process exclusion list could not be refreshed.");
+            }
+            finally
+            {
+                _filterRefreshInProgress = false;
+            }
         };
         Shown += (_, _) => StartMagnifier();
         FormClosed += (_, _) => StopMagnifier();
@@ -130,7 +144,7 @@ internal sealed class ShareableRegionWindowForm : Form
             return;
         }
 
-        UpdateRegionBorder();
+        UpdateRegionBorder(updateFilter: false);
         UpdateMagnifierLayout();
         if (!UpdateWindowFilter())
         {
@@ -147,7 +161,7 @@ internal sealed class ShareableRegionWindowForm : Form
         ShowWindow(_magnifier, ShowWindowShow);
         InvalidateRect(_magnifier, IntPtr.Zero, false);
         _refreshTimer.Start();
-        _filterTimer.Start();
+        if (_excludedProcesses.Count > 0) _filterTimer.Start();
     }
 
     private void StopMagnifier()
@@ -175,8 +189,7 @@ internal sealed class ShareableRegionWindowForm : Form
     {
         if (_magnifier == IntPtr.Zero || WindowState == FormWindowState.Minimized) return true;
 
-        var source = new Rect(_region.X, _region.Y, _region.X + _region.Width, _region.Y + _region.Height);
-        if (!MagSetWindowSource(_magnifier, source)) return false;
+        if (!MagSetWindowSource(_magnifier, _sourceRectangle)) return false;
 
         return InvalidateRect(_magnifier, IntPtr.Zero, false);
     }
@@ -195,24 +208,51 @@ internal sealed class ShareableRegionWindowForm : Form
     {
         if (_magnifier == IntPtr.Zero) return true;
 
-        var windows = new HashSet<IntPtr> { Handle };
-        if (_regionBorder is not null) windows.Add(_regionBorder.Handle);
-        if (_excludedProcesses.Count > 0)
+        return ApplyWindowFilter(FindExcludedWindows());
+    }
+
+    private async Task<bool> UpdateWindowFilterAsync()
+    {
+        var windows = await Task.Run(FindExcludedWindows);
+        if (_magnifier == IntPtr.Zero || IsDisposed) return true;
+
+        return ApplyWindowFilter(windows);
+    }
+
+    private HashSet<IntPtr> FindExcludedWindows()
+    {
+        var windows = new HashSet<IntPtr>();
+        if (_excludedProcesses.Count == 0) return windows;
+
+        var processMatches = new Dictionary<uint, bool>();
+        EnumWindows((window, _) =>
         {
-            EnumWindows((window, _) =>
+            GetWindowThreadProcessId(window, out var processId);
+            if (!processMatches.TryGetValue(processId, out var isExcluded))
             {
-                GetWindowThreadProcessId(window, out var processId);
                 try
                 {
                     using var process = Process.GetProcessById((int)processId);
-                    if (_excludedProcesses.Contains(process.ProcessName)) windows.Add(window);
+                    isExcluded = _excludedProcesses.Contains(process.ProcessName);
                 }
                 catch (ArgumentException) { }
                 catch (InvalidOperationException) { }
                 catch (System.ComponentModel.Win32Exception) { }
-                return true;
-            }, IntPtr.Zero);
-        }
+                processMatches[processId] = isExcluded;
+            }
+            if (isExcluded) windows.Add(window);
+            return true;
+        }, IntPtr.Zero);
+
+        return windows;
+    }
+
+    private bool ApplyWindowFilter(HashSet<IntPtr> windows)
+    {
+        windows.Add(Handle);
+        if (_regionBorder is not null) windows.Add(_regionBorder.Handle);
+
+        if (windows.SetEquals(_filteredWindows)) return true;
 
         var handles = windows.ToArray();
         if (!MagSetWindowFilterList(_magnifier, MagnifierFilterExclude, handles.Length, handles)) return false;
@@ -229,7 +269,7 @@ internal sealed class ShareableRegionWindowForm : Form
         return true;
     }
 
-    private void UpdateRegionBorder()
+    private void UpdateRegionBorder(bool updateFilter = true)
     {
         if (!IsHandleCreated || IsDisposed) return;
 
@@ -241,7 +281,7 @@ internal sealed class ShareableRegionWindowForm : Form
 
         _regionBorder ??= new RegionBorderForm(_region.Rectangle);
         if (!_regionBorder.Visible) _regionBorder.Show();
-        UpdateWindowFilter();
+        if (updateFilter) UpdateWindowFilter();
     }
 
     private void ShowCaptureError(string message)
@@ -276,6 +316,7 @@ internal sealed class ShareableRegionWindowForm : Form
     private const int WindowStyleExtendedTransparent = 0x00000020;
     private const int LayeredWindowAlpha = 0x00000002;
     private const int ShowWindowShow = 5;
+    private const int RefreshIntervalMilliseconds = 16;
     private const uint RedrawWindowRefreshFlags = 0x0001 | 0x0080 | 0x0100 | 0x0400;
     private const int ResizeGrip = 7;
     private const int WindowMessageNonClientHitTest = 0x0084;
