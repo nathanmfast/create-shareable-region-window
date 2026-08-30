@@ -7,4 +7,5 @@ internal sealed record Settings(
     int Height,
     bool IncludeCursor,
     bool TopMost,
-    string? ExcludedProcesses = null);
+    string? ExcludedProcesses = null,
+    bool ShowRegionBorder = false);

@@ -22,9 +22,10 @@ The executable will be under `bin\Release\net10.0-windows\win-x64\publish`.
 
 1. Click **Select area…** and drag around the part of the desktop to capture. Press Escape to cancel.
 2. Optionally enter executable names such as `notepad.exe, teams.exe` under **Hide processes**.
-3. Click **Create**.
-4. In the meeting app, share the window named **Shareable Region Window**.
-5. Resize the Shareable Region Window freely; the captured image keeps its aspect ratio.
+3. Optionally enable **Show a red border around the shared region** to keep the capture boundary visible on your desktop. The border is not included in the shared window.
+4. Click **Create**.
+5. In the meeting app, share the window named **Shareable Region Window**.
+6. Resize the Shareable Region Window freely; the captured image keeps its aspect ratio.
 
 The Shareable Region Window is borderless so window sharing contains only the captured image. Drag anywhere inside it to move it, drag an edge or corner to resize it, and press Escape to close it.
 

@@ -14,12 +14,16 @@ internal sealed class ShareableRegionWindowForm : Form
     private HashSet<IntPtr> _filteredWindows = [];
     private IntPtr _magnifier;
     private bool _magnifierInitialized;
+    private RegionBorderForm? _regionBorder;
+    private bool _showRegionBorder;
 
-    public ShareableRegionWindowForm(CaptureRegion region, bool includeCursor, IReadOnlySet<string> excludedProcesses)
+    public ShareableRegionWindowForm(CaptureRegion region, bool includeCursor,
+        IReadOnlySet<string> excludedProcesses, bool showRegionBorder)
     {
         _region = region;
         _includeCursor = includeCursor;
         _excludedProcesses = excludedProcesses;
+        _showRegionBorder = showRegionBorder;
         Text = "Shareable Region Window";
         FormBorderStyle = FormBorderStyle.None;
         BackColor = Color.Black;
@@ -46,6 +50,20 @@ internal sealed class ShareableRegionWindowForm : Form
         {
             if (e.KeyCode == Keys.Escape) Close();
         };
+    }
+
+    [System.ComponentModel.Browsable(false)]
+    [System.ComponentModel.DesignerSerializationVisibility(
+        System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+    public bool ShowRegionBorder
+    {
+        get => _showRegionBorder;
+        set
+        {
+            if (_showRegionBorder == value) return;
+            _showRegionBorder = value;
+            UpdateRegionBorder();
+        }
     }
 
     protected override CreateParams CreateParams
@@ -112,6 +130,7 @@ internal sealed class ShareableRegionWindowForm : Form
             return;
         }
 
+        UpdateRegionBorder();
         UpdateMagnifierLayout();
         if (!UpdateWindowFilter())
         {
@@ -137,6 +156,9 @@ internal sealed class ShareableRegionWindowForm : Form
         _refreshTimer.Dispose();
         _filterTimer.Stop();
         _filterTimer.Dispose();
+        _regionBorder?.Close();
+        _regionBorder?.Dispose();
+        _regionBorder = null;
         if (_magnifier != IntPtr.Zero)
         {
             DestroyWindow(_magnifier);
@@ -174,6 +196,7 @@ internal sealed class ShareableRegionWindowForm : Form
         if (_magnifier == IntPtr.Zero) return true;
 
         var windows = new HashSet<IntPtr> { Handle };
+        if (_regionBorder is not null) windows.Add(_regionBorder.Handle);
         if (_excludedProcesses.Count > 0)
         {
             EnumWindows((window, _) =>
@@ -204,6 +227,21 @@ internal sealed class ShareableRegionWindowForm : Form
         if (newlyFilteredWindows.Length > 0) DwmFlush();
         InvalidateRect(_magnifier, IntPtr.Zero, false);
         return true;
+    }
+
+    private void UpdateRegionBorder()
+    {
+        if (!IsHandleCreated || IsDisposed) return;
+
+        if (!_showRegionBorder)
+        {
+            _regionBorder?.Hide();
+            return;
+        }
+
+        _regionBorder ??= new RegionBorderForm(_region.Rectangle);
+        if (!_regionBorder.Visible) _regionBorder.Show();
+        UpdateWindowFilter();
     }
 
     private void ShowCaptureError(string message)

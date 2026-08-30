@@ -12,6 +12,7 @@ internal sealed class CreateShareableRegionWindowForm : Form
     private readonly TextBox _excludedProcesses = new() { Width = 300, PlaceholderText = "notepad.exe, teams.exe" };
     private readonly CheckBox _cursor = new() { Text = "Include mouse pointer", Checked = true, AutoSize = true };
     private readonly CheckBox _topMost = new() { Text = "Keep Shareable Region Window on top", AutoSize = true };
+    private readonly CheckBox _showRegionBorder = new() { Text = "Show a red border around the shared region", AutoSize = true };
     private readonly Label _status = new() { AutoSize = true, ForeColor = Color.FromArgb(80, 80, 80) };
     private ShareableRegionWindowForm? _shareableRegionWindow;
 
@@ -74,12 +75,17 @@ internal sealed class CreateShareableRegionWindowForm : Form
             Location = new Point(Padding.Left, Padding.Top),
             Margin = Padding.Empty
         };
-        content.Controls.AddRange([help, grid, exclusionsRow, _cursor, _topMost, buttons, _status]);
+        content.Controls.AddRange([help, grid, exclusionsRow, _cursor, _topMost, _showRegionBorder, buttons, _status]);
         Controls.Add(content);
 
         _topMost.CheckedChanged += (_, _) =>
         {
             if (_shareableRegionWindow is not null) _shareableRegionWindow.TopMost = _topMost.Checked;
+        };
+        _showRegionBorder.CheckedChanged += (_, _) =>
+        {
+            if (_shareableRegionWindow is not null)
+                _shareableRegionWindow.ShowRegionBorder = _showRegionBorder.Checked;
         };
     }
 
@@ -128,7 +134,8 @@ internal sealed class CreateShareableRegionWindowForm : Form
         var region = SelectedCaptureRegion;
         var excludedProcesses = ParseProcessNames(_excludedProcesses.Text);
         SaveSettings();
-        _shareableRegionWindow = new ShareableRegionWindowForm(region, _cursor.Checked, excludedProcesses)
+        _shareableRegionWindow = new ShareableRegionWindowForm(
+            region, _cursor.Checked, excludedProcesses, _showRegionBorder.Checked)
         {
             TopMost = _topMost.Checked
         };
@@ -162,6 +169,7 @@ internal sealed class CreateShareableRegionWindowForm : Form
             _cursor.Checked = settings.IncludeCursor;
             _topMost.Checked = settings.TopMost;
             _excludedProcesses.Text = settings.ExcludedProcesses ?? "";
+            _showRegionBorder.Checked = settings.ShowRegionBorder;
         }
         catch { /* Invalid settings should not prevent startup. */ }
     }
@@ -172,7 +180,8 @@ internal sealed class CreateShareableRegionWindowForm : Form
         {
             Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath)!);
             var value = new Settings((int)_x.Value, (int)_y.Value, (int)_width.Value,
-                (int)_height.Value, _cursor.Checked, _topMost.Checked, _excludedProcesses.Text);
+                (int)_height.Value, _cursor.Checked, _topMost.Checked, _excludedProcesses.Text,
+                _showRegionBorder.Checked);
             File.WriteAllText(SettingsPath, JsonSerializer.Serialize(value));
         }
         catch { /* Closing the app should remain reliable. */ }
