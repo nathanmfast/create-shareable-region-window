@@ -1,6 +1,6 @@
 # Create Shareable Region Window for Windows
 
-The Windows application turns an adjustable area of the desktop into a dedicated **Shareable Region Window** for Teams, Zoom, Meet, Discord, or another meeting app.
+The Windows application turns an adjustable area of the desktop into a dedicated **Shareable Region Window** for Teams, Zoom, Meet, Discord, or another meeting app. The cross-platform behavior contract is defined in the repository's [root README](../README.md#functional-specification); this document covers Windows setup and platform notes.
 
 ## Run it
 
@@ -35,14 +35,12 @@ To build another version or Windows architecture:
 3. Optionally enable **Show a red border around the shared region** to keep the capture boundary visible on your desktop. The border is not included in the shared window.
 4. Click **Create**.
 5. In the meeting app, share the window named **Shareable Region Window**.
-6. Resize the Shareable Region Window freely; the captured image keeps its aspect ratio.
+6. Resize or move the Shareable Region Window as needed.
 
-The Shareable Region Window is borderless so window sharing contains only the captured image. Drag anywhere inside it to move it, drag an edge or corner to resize it, and press Escape to close it.
-
-The default capture is 1920×1080 at desktop coordinate 0,0. Coordinates may be negative when a monitor is positioned left of or above the primary monitor.
+Windows uses virtual-desktop pixel coordinates. Coordinates may be negative when a monitor is positioned left of or above the primary monitor, and a source rectangle may span displays. Process exclusions accept executable names with or without `.exe`, separated by commas, semicolons, or new lines.
 
 ## About virtual monitors
 
 This app creates a normal shareable window, not a Windows display device. A true additional monitor requires an administrator-installed, signed Indirect Display Driver and can change desktop layout. For the meeting-sharing use case, the Shareable Region Window provides the same shareable output without driver installation or administrator access.
 
-Windows belonging to hidden processes remain visible on your desktop but are omitted from the Shareable Region Window, revealing the windows underneath them. The Shareable Region Window also excludes itself from its captured output.
+For the complete output-window, exclusion, persistence, and source-border requirements, see the [functional specification](../README.md#functional-specification).

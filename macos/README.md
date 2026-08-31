@@ -1,6 +1,6 @@
 # Create Shareable Region Window for macOS
 
-The macOS application captures an adjustable area of one display and presents it in a dedicated **Shareable Region Window** for Teams, Zoom, Meet, Discord, and other meeting apps.
+The macOS application captures an adjustable area of one display and presents it in a dedicated **Shareable Region Window** for Teams, Zoom, Meet, Discord, and other meeting apps. The cross-platform behavior contract is defined in the repository's [root README](../README.md#functional-specification); this document covers macOS setup and platform notes.
 
 ## Requirements
 
@@ -35,6 +35,6 @@ After a successful run, download the `CreateShareableRegionWindow-macOS` artifac
 4. Click **Create** and grant Screen Recording permission if macOS requests it.
 5. Share the window named **Shareable Region Window** in the meeting application.
 
-The output window excludes this application from its source capture, preventing recursive capture and keeping the optional red border out of the shared image. Application exclusions are stored by bundle identifier.
+macOS uses screen points for the source rectangle and captures at the selected display's backing scale. A region must fit entirely on one physical display; select it again after rearranging or disconnecting displays. Application exclusions are stored by bundle identifier and are resolved when capture starts.
 
-The initial implementation requires a selected region to fit entirely on one physical display. Select the area again after rearranging or disconnecting displays.
+For the complete output-window, exclusion, persistence, and source-border requirements, see the [functional specification](../README.md#functional-specification).
