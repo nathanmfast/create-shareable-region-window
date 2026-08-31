@@ -9,5 +9,7 @@
     <AssemblyName>CreateShareableRegionWindow</AssemblyName>
     <RootNamespace>CreateShareableRegionWindow</RootNamespace>
     <AssemblyTitle>Create Shareable Region Window</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <Description>Turn a desktop region into a window that can be shared in meeting applications.</Description>
   </PropertyGroup>
 </Project>

@@ -12,13 +12,21 @@ From the repository root:
 dotnet run --project windows/CreateShareableRegionWindow.csproj
 ```
 
-Or create a single-file build:
+## Build a portable release
 
 ```powershell
-dotnet publish windows/CreateShareableRegionWindow.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+.\scripts\build-portable.ps1
 ```
 
-The executable will be under `windows/bin/Release/net10.0-windows/win-x64/publish`.
+The script creates a versioned ZIP under `artifacts/`. Recipients only need to extract the ZIP and run `CreateShareableRegionWindow.exe`; the .NET runtime is included. No installation or administrator access is required.
+
+The portable app stores `settings.json` beside its executable, so moving or removing the folder also moves or removes its settings. Windows SmartScreen may warn about downloaded builds that have not been code-signed.
+
+To build another version or Windows architecture:
+
+```powershell
+.\scripts\build-portable.ps1 -Version 1.1.0 -Runtime win-arm64
+```
 
 ## Use it
 

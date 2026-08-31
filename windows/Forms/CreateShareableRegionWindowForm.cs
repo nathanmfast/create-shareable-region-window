@@ -187,9 +187,7 @@ internal sealed class CreateShareableRegionWindowForm : Form
         catch { /* Closing the app should remain reliable. */ }
     }
 
-    private static string SettingsPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "CreateShareableRegionWindow", "settings.json");
+    private static string SettingsPath => Path.Combine(AppContext.BaseDirectory, "settings.json");
 
     private static NumericUpDown CreateNumber(int min, int max, int value) => new()
     {

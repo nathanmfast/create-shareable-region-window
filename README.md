@@ -8,3 +8,11 @@ The repository contains two native desktop applications side by side:
 - [`macos/`](macos/) — the Swift and ScreenCaptureKit macOS application.
 
 Each application has platform-specific build and usage instructions in its own README.
+
+To create the shareable, no-install Windows package, run:
+
+```powershell
+.\scripts\build-portable.ps1
+```
+
+The portable ZIP is written to `artifacts/`.
