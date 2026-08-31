@@ -21,6 +21,12 @@ xcodebuild -project macos/CreateShareableRegionWindow.xcodeproj \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
+## GitHub Actions
+
+The `Build macOS app` workflow builds an unsigned universal application on a standard GitHub-hosted macOS runner. It runs for macOS changes pushed to `master`, for pull requests that change the macOS application, and on demand from the repository's **Actions** page.
+
+After a successful run, download the `CreateShareableRegionWindow-macOS` artifact from the workflow summary. The artifact is retained for 14 days. Because it is unsigned, macOS may require an explicit approval before opening it; signing and notarization are separate release steps.
+
 ## Use it
 
 1. Click **Select area…** and drag within one display. Press Escape to cancel.
