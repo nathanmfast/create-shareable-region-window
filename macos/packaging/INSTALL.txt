@@ -4,26 +4,26 @@ CREATE SHAREABLE REGION WINDOW — macOS INSTALLATION
 This is an unsigned, unnotarized application. Only continue if you downloaded
 it from the project's official GitHub Releases page and trust the source.
 
-INSTALL
--------
+INSTALL AND OPEN FOR THE FIRST TIME
+-----------------------------------
 
 1. Double-click CreateShareableRegionWindow-macOS.zip if your browser did not
    expand it automatically.
 2. Open the resulting "Create Shareable Region Window" folder.
 3. Drag CreateShareableRegionWindow.app into your Applications folder.
-4. Open Applications and double-click CreateShareableRegionWindow.
-
-FIRST LAUNCH OF THIS UNSIGNED BUILD
------------------------------------
-
-macOS will initially block the app because it has not been signed and
-notarized through Apple's Developer Program.
-
-1. After macOS blocks the first launch, close the warning.
-2. Choose Apple menu > System Settings > Privacy & Security.
-3. Scroll down to the Security section and click Open Anyway next to the
+4. Open Applications and double-click CreateShareableRegionWindow. A warning
+   will say that macOS cannot verify the developer or check the app for
+   malicious software. THIS IS THE EXPECTED FIRST-LAUNCH STEP; the app will
+   not open yet.
+5. Click Done on that warning. Do not choose Move to Trash. After clicking
+   Done, continue directly to the next step instead of trying to open the app
+   again.
+6. Choose Apple menu > System Settings > Privacy & Security.
+7. Scroll down to the Security section and click Open Anyway next to the
    message about CreateShareableRegionWindow.
-4. Authenticate if requested, then click Open in the confirmation dialog.
+8. Authenticate if requested, then click Open in the confirmation dialog.
+9. The app should now open. Grant Screen & System Audio Recording permission
+   when macOS asks for it.
 
 Apple makes Open Anyway available for about one hour after the blocked launch.
 Once approved, the app can be opened normally from Applications.

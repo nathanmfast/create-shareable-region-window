@@ -15,10 +15,11 @@ The downloadable application is currently unsigned and unnotarized. Only overrid
 1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
 2. Open the resulting **Create Shareable Region Window** folder.
 3. Drag `CreateShareableRegionWindow.app` into **Applications**.
-4. Open the app from Applications once. macOS will initially block the unsigned build.
-5. Open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to the message about the app.
-6. Authenticate if requested and click **Open** in the confirmation dialog.
-7. Grant **Screen & System Audio Recording** permission when prompted. Quit and reopen the app if macOS requests it.
+4. Open the app from Applications. macOS will display a warning and block this first launch; **this is expected**.
+5. Click **Done** on the warning. Do not choose **Move to Trash**. The app will not open yet—continue directly to the next step.
+6. Open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to the message about the app.
+7. Authenticate if requested and click **Open** in the confirmation dialog.
+8. When the app opens, grant **Screen & System Audio Recording** permission. Quit and reopen the app if macOS requests it.
 
 The ZIP includes these instructions in `INSTALL.txt`. Apple makes **Open Anyway** available for about one hour after the blocked launch; see [Apple's instructions for opening an app from an unknown developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac).
 
