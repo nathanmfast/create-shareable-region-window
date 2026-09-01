@@ -65,6 +65,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
+      - name: Read version from tag
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tags must use semantic versioning, for example v1.2.3. Received: $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          echo "MACOS_MARKETING_VERSION=${BASH_REMATCH[1]}" >> "$GITHUB_ENV"
+          echo "MACOS_BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+
       - name: Build universal application
         run: |
           set -o pipefail
@@ -77,6 +89,8 @@ jobs:
             ARCHS="arm64 x86_64" \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGNING_ALLOWED=NO \
+            MARKETING_VERSION="$MACOS_MARKETING_VERSION" \
+            CURRENT_PROJECT_VERSION="$MACOS_BUILD_NUMBER" \
             clean build
 
       - name: Package application

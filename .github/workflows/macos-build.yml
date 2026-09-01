@@ -33,7 +33,23 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+
+      - name: Resolve application version
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          marketing_version=1.0.0
+          if [[ -n "$RELEASE_TAG" ]]; then
+            if [[ ! "$RELEASE_TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)(-[0-9A-Za-z.-]+)?$ ]]; then
+              echo "Release tags must use semantic versioning, for example v1.2.3. Received: $RELEASE_TAG" >&2
+              exit 1
+            fi
+            marketing_version="${BASH_REMATCH[1]}"
+          fi
+
+          echo "MACOS_MARKETING_VERSION=$marketing_version" >> "$GITHUB_ENV"
+          echo "MACOS_BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
 
       - name: Build
         run: |
@@ -47,6 +63,8 @@ jobs:
             ARCHS="arm64 x86_64" \
             ONLY_ACTIVE_ARCH=NO \
             CODE_SIGNING_ALLOWED=NO \
+            MARKETING_VERSION="$MACOS_MARKETING_VERSION" \
+            CURRENT_PROJECT_VERSION="$MACOS_BUILD_NUMBER" \
             clean build
 
       - name: Package application

@@ -27,7 +27,7 @@ The `Build macOS app` workflow builds an unsigned universal application on a sta
 
 After a successful run, download the `CreateShareableRegionWindow-macOS` artifact from the workflow summary. The artifact is retained for 14 days. A manual run can also attach the ZIP to an existing GitHub Release by supplying its tag as `release_tag`.
 
-Versioned repository releases include the same universal macOS ZIP automatically. Because it is unsigned, macOS requires an explicit approval before opening it; signing and notarization are separate release steps.
+Versioned repository releases include the same universal macOS ZIP automatically. The release tag supplies the app's user-facing version, so a `v1.2.3` release reports version `1.2.3` in Finder while GitHub Actions supplies a monotonically increasing bundle build number. Windows and macOS therefore share one cross-platform release version. Because the app is unsigned, macOS requires an explicit approval before opening it; signing and notarization are separate release steps.
 
 ## Use it
 
