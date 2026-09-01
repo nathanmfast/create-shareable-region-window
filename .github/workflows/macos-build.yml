@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: "Existing release tag to receive this unsigned macOS ZIP (for example, v1.0.0)"
+        description: "Existing release tag to receive this ad-hoc-signed macOS ZIP (for example, v1.0.0)"
         required: false
         type: string
 
@@ -70,6 +70,7 @@ jobs:
       - name: Package application
         run: |
           app_path="$RUNNER_TEMP/DerivedData/Build/Products/Release/CreateShareableRegionWindow.app"
+          bash macos/scripts/ad-hoc-sign-app.sh "$app_path"
           bash macos/scripts/package-app.sh \
             "$app_path" \
             "$RUNNER_TEMP/CreateShareableRegionWindow-macOS.zip"

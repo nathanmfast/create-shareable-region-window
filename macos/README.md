@@ -10,7 +10,7 @@ The macOS application captures an adjustable area of one display and presents it
 
 ## Install a downloaded release
 
-The downloadable application is currently unsigned and unnotarized. Only override macOS security if you downloaded it from the project's GitHub Releases page and trust the source.
+The downloadable application uses a free ad-hoc signature; it is not signed with an Apple Developer ID or notarized by Apple. Only override macOS security if you downloaded it from the project's GitHub Releases page and trust the source.
 
 1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
 2. Open the resulting **Create Shareable Region Window** folder.
@@ -22,6 +22,8 @@ The downloadable application is currently unsigned and unnotarized. Only overrid
 8. When the app opens, grant **Screen & System Audio Recording** permission. Quit and reopen the app if macOS requests it.
 
 The ZIP includes these instructions in `INSTALL.txt`. Apple makes **Open Anyway** available for about one hour after the blocked launch; see [Apple's instructions for opening an app from an unknown developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac).
+
+If Screen Recording still appears disabled after approval and a relaunch, quit the app and run `tccutil reset ScreenCapture com.nathanfast.CreateShareableRegionWindow` in Terminal. Reopen the app, click **Create**, and approve **Screen & System Audio Recording** again. The permission should persist for that exact build; installing a newer ad-hoc-signed build may require approval again.
 
 ## Build and run
 
@@ -38,11 +40,11 @@ xcodebuild -project macos/CreateShareableRegionWindow.xcodeproj \
 
 ## GitHub Actions
 
-The `Build macOS app` workflow builds an unsigned universal application on a standard GitHub-hosted macOS runner. It runs for macOS changes pushed to `master`, for pull requests that change the macOS application, and on demand from the repository's **Actions** page.
+The `Build macOS app` workflow builds an ad-hoc-signed universal application on a standard GitHub-hosted macOS runner. It runs for macOS changes pushed to `master`, for pull requests that change the macOS application, and on demand from the repository's **Actions** page.
 
 After a successful run, download the `CreateShareableRegionWindow-macOS` artifact from the workflow summary. The artifact is retained for 14 days. A manual run can also attach the ZIP to an existing GitHub Release by supplying its tag as `release_tag`.
 
-Versioned repository releases include the same universal macOS ZIP automatically. The release tag supplies the app's user-facing version, so a `v1.2.3` release reports version `1.2.3` in Finder while GitHub Actions supplies a monotonically increasing bundle build number. Windows and macOS therefore share one cross-platform release version. Because the app is unsigned, macOS requires an explicit approval before opening it; signing and notarization are separate release steps.
+Versioned repository releases include the same universal macOS ZIP automatically. The release tag supplies the app's user-facing version, so a `v1.2.3` release reports version `1.2.3` in Finder while GitHub Actions supplies a monotonically increasing bundle build number. Windows and macOS therefore share one cross-platform release version. GitHub Actions applies a free ad-hoc signature so privacy approval can persist across relaunches of the same build. Because the app is not Developer ID signed or notarized, macOS still requires an explicit approval before opening it, and a new build may require Screen Recording approval again.
 
 ## Use it
 

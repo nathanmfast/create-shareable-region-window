@@ -4,13 +4,13 @@ Create Shareable Region Window turns a selected rectangle of the desktop into a 
 
 ## Downloads
 
-Download the latest builds from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes portable x64 and ARM64 Windows packages, an unsigned universal macOS application, generated release notes, and SHA-256 checksums.
+Download the latest builds from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes portable x64 and ARM64 Windows packages, an ad-hoc-signed universal macOS application, generated release notes, and SHA-256 checksums.
 
 On Windows, extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required.
 
 ### Install on macOS
 
-The macOS download is currently unsigned and unnotarized. Only override macOS security if you downloaded it from this repository's GitHub Releases page and trust the source.
+The macOS download uses a free ad-hoc signature; it is not signed with an Apple Developer ID or notarized by Apple. Only override macOS security if you downloaded it from this repository's GitHub Releases page and trust the source.
 
 1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
 2. Open the resulting **Create Shareable Region Window** folder.
@@ -22,6 +22,8 @@ The macOS download is currently unsigned and unnotarized. Only override macOS se
 8. When the app opens, grant **Screen & System Audio Recording** permission. Quit and reopen the app if macOS requests it.
 
 The ZIP includes the same instructions in `INSTALL.txt`. Apple makes **Open Anyway** available for about one hour after the blocked launch; see [Apple's instructions for opening an app from an unknown developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac).
+
+If Screen Recording still appears disabled after approval and a relaunch, quit the app and run `tccutil reset ScreenCapture com.nathanfast.CreateShareableRegionWindow` in Terminal. Reopen the app, click **Create**, and approve **Screen & System Audio Recording** again. The permission should persist for that exact build; installing a newer ad-hoc-signed build may require approval again.
 
 The repository contains two native applications:
 

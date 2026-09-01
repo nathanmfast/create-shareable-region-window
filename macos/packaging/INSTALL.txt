@@ -1,8 +1,9 @@
 CREATE SHAREABLE REGION WINDOW — macOS INSTALLATION
 ===================================================
 
-This is an unsigned, unnotarized application. Only continue if you downloaded
-it from the project's official GitHub Releases page and trust the source.
+This application is ad-hoc signed but is not signed with an Apple Developer ID
+or notarized by Apple. Only continue if you downloaded it from the project's
+official GitHub Releases page and trust the source.
 
 INSTALL AND OPEN FOR THE FIRST TIME
 -----------------------------------
@@ -44,3 +45,21 @@ new one. To uninstall, quit the app and move it from Applications to the Trash.
 
 Apple's current instructions for opening an app from an unknown developer:
 https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac
+
+IF SCREEN RECORDING PERMISSION DOES NOT TAKE EFFECT
+---------------------------------------------------
+
+The permission should survive quitting and reopening this exact build. If the
+app still says permission is missing even though the switch is enabled:
+
+1. Quit CreateShareableRegionWindow.
+2. Open Terminal from Applications > Utilities.
+3. Paste this command and press Return:
+
+   tccutil reset ScreenCapture com.nathanfast.CreateShareableRegionWindow
+
+4. Reopen CreateShareableRegionWindow, select an area, and click Create.
+5. Approve Screen & System Audio Recording again, quit the app, and reopen it.
+
+Installing a newer ad-hoc-signed build may require approving Screen Recording
+again because the free signature identifies that specific build.

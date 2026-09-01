@@ -57,7 +57,7 @@ jobs:
           retention-days: 7
 
   build-macos:
-    name: Build unsigned macOS application
+    name: Build ad-hoc-signed macOS application
     runs-on: macos-15
     timeout-minutes: 20
 
@@ -96,6 +96,7 @@ jobs:
       - name: Package application
         run: |
           app_path="$RUNNER_TEMP/DerivedData/Build/Products/Release/CreateShareableRegionWindow.app"
+          bash macos/scripts/ad-hoc-sign-app.sh "$app_path"
           bash macos/scripts/package-app.sh \
             "$app_path" \
             artifacts/CreateShareableRegionWindow-macOS.zip
