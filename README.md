@@ -4,7 +4,9 @@ Create Shareable Region Window turns a selected rectangle of the desktop into a 
 
 ## Downloads
 
-Download the latest portable Windows build from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes packages for x64 and ARM64 Windows, generated release notes, and SHA-256 checksums. Extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required.
+Download the latest builds from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes portable x64 and ARM64 Windows packages, an unsigned universal macOS application, generated release notes, and SHA-256 checksums.
+
+On Windows, extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required. On macOS, extract `CreateShareableRegionWindow-macOS.zip`, move the `.app` to Applications, and explicitly approve the unsigned build in **System Settings → Privacy & Security** before granting Screen Recording permission.
 
 The repository contains two native applications:
 
@@ -101,4 +103,4 @@ git tag v1.0.0
 git push github v1.0.0
 ```
 
-The release is published only after both Windows packages build successfully.
+The release is published only after both Windows packages and the macOS package build successfully.

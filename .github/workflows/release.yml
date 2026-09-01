@@ -56,9 +56,55 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-macos:
+    name: Build unsigned macOS application
+    runs-on: macos-15
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build universal application
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project macos/CreateShareableRegionWindow.xcodeproj \
+            -scheme CreateShareableRegionWindow \
+            -configuration Release \
+            -destination "platform=macOS" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            ARCHS="arm64 x86_64" \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+
+      - name: Package application
+        run: |
+          mkdir -p artifacts
+          app_path="$RUNNER_TEMP/DerivedData/Build/Products/Release/CreateShareableRegionWindow.app"
+          test -d "$app_path"
+          ditto \
+            -c \
+            -k \
+            --sequesterRsrc \
+            --keepParent \
+            "$app_path" \
+            artifacts/CreateShareableRegionWindow-macOS.zip
+
+      - name: Upload macOS package
+        uses: actions/upload-artifact@v7
+        with:
+          name: CreateShareableRegionWindow-macOS
+          path: artifacts/CreateShareableRegionWindow-macOS.zip
+          if-no-files-found: error
+          retention-days: 7
+
   publish:
     name: Publish GitHub Release
-    needs: build-windows
+    needs:
+      - build-windows
+      - build-macos
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -91,5 +137,6 @@ jobs:
             release-assets/* \
             --verify-tag \
             --generate-notes \
+            --notes "The macOS ZIP is currently unsigned. On first launch, macOS requires an explicit override in System Settings → Privacy & Security, followed by Screen Recording permission." \
             --title "Create Shareable Region Window $RELEASE_TAG" \
             "${release_options[@]}"

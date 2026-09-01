@@ -12,6 +12,11 @@ on:
       - "macos/**"
       - ".github/workflows/macos-build.yml"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing release tag to receive this unsigned macOS ZIP (for example, v1.0.0)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -57,9 +62,47 @@ jobs:
             "$RUNNER_TEMP/CreateShareableRegionWindow-macOS.zip"
 
       - name: Upload application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: CreateShareableRegionWindow-macOS
           path: ${{ runner.temp }}/CreateShareableRegionWindow-macOS.zip
           if-no-files-found: error
           retention-days: 14
+
+  publish-release:
+    name: Add macOS ZIP to existing release
+    if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download macOS package
+        uses: actions/download-artifact@v8
+        with:
+          name: CreateShareableRegionWindow-macOS
+          path: release-assets
+
+      - name: Update release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          gh release view "$RELEASE_TAG" >/dev/null
+          gh release download "$RELEASE_TAG" \
+            --pattern SHA256SUMS.txt \
+            --dir release-assets \
+            --clobber
+
+          cd release-assets
+          grep -v '  CreateShareableRegionWindow-macOS.zip$' SHA256SUMS.txt > SHA256SUMS.updated.txt || true
+          sha256sum CreateShareableRegionWindow-macOS.zip >> SHA256SUMS.updated.txt
+          mv SHA256SUMS.updated.txt SHA256SUMS.txt
+
+          gh release upload "$RELEASE_TAG" \
+            CreateShareableRegionWindow-macOS.zip \
+            SHA256SUMS.txt \
+            --clobber
