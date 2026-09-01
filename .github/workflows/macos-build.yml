@@ -92,6 +92,9 @@ jobs:
       contents: write
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
       - name: Download macOS package
         uses: actions/download-artifact@v8
         with:
@@ -119,3 +122,13 @@ jobs:
             CreateShareableRegionWindow-macOS.zip \
             SHA256SUMS.txt \
             --clobber
+
+          cd ..
+          existing_notes=$(gh release view "$RELEASE_TAG" --json body --jq .body)
+          if [[ "$existing_notes" != *"<!-- macos-installation -->"* ]]; then
+            {
+              cat macos/packaging/RELEASE-NOTES.md
+              printf '\n%s\n' "$existing_notes"
+            } > release-assets/updated-release-notes.md
+            gh release edit "$RELEASE_TAG" --notes-file release-assets/updated-release-notes.md
+          fi
