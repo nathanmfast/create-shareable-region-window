@@ -5,14 +5,24 @@ This application is ad-hoc signed but is not signed with an Apple Developer ID
 or notarized by Apple. Only continue if you downloaded it from the project's
 official GitHub Releases page and trust the source.
 
+IMPORTANT: MOVE THE APP TO APPLICATIONS BEFORE OPENING IT
+---------------------------------------------------------
+
+Do not launch CreateShareableRegionWindow from the Downloads folder. Move the
+app into Applications first, then always launch the copy in Applications.
+Opening the Downloads copy can cause macOS to grant Screen Recording permission
+to the wrong copy.
+
 INSTALL AND OPEN FOR THE FIRST TIME
 -----------------------------------
 
 1. Double-click CreateShareableRegionWindow-macOS.zip if your browser did not
    expand it automatically.
 2. Open the resulting "Create Shareable Region Window" folder.
-3. Drag CreateShareableRegionWindow.app into your Applications folder.
-4. Open Applications and double-click CreateShareableRegionWindow. A warning
+3. Drag CreateShareableRegionWindow.app into your Applications folder. Do not
+   double-click the app in Downloads.
+4. Open Applications and double-click the copy of CreateShareableRegionWindow
+   located there. A warning
    will say that macOS cannot verify the developer or check the app for
    malicious software. THIS IS THE EXPECTED FIRST-LAUNCH STEP; the app will
    not open yet.
