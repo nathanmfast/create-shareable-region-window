@@ -70,12 +70,7 @@ jobs:
       - name: Package application
         run: |
           app_path="$RUNNER_TEMP/DerivedData/Build/Products/Release/CreateShareableRegionWindow.app"
-          test -d "$app_path"
-          ditto \
-            -c \
-            -k \
-            --sequesterRsrc \
-            --keepParent \
+          bash macos/scripts/package-app.sh \
             "$app_path" \
             "$RUNNER_TEMP/CreateShareableRegionWindow-macOS.zip"
 

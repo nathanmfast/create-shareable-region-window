@@ -8,6 +8,20 @@ The macOS application captures an adjustable area of one display and presents it
 - Xcode 15 or later.
 - Screen Recording permission in **System Settings → Privacy & Security → Screen Recording**.
 
+## Install a downloaded release
+
+The downloadable application is currently unsigned and unnotarized. Only override macOS security if you downloaded it from the project's GitHub Releases page and trust the source.
+
+1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
+2. Open the resulting **Create Shareable Region Window** folder.
+3. Drag `CreateShareableRegionWindow.app` into **Applications**.
+4. Open the app from Applications once. macOS will initially block the unsigned build.
+5. Open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to the message about the app.
+6. Authenticate if requested and click **Open** in the confirmation dialog.
+7. Grant **Screen & System Audio Recording** permission when prompted. Quit and reopen the app if macOS requests it.
+
+The ZIP includes these instructions in `INSTALL.txt`. Apple makes **Open Anyway** available for about one hour after the blocked launch; see [Apple's instructions for opening an app from an unknown developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac).
+
 ## Build and run
 
 Open `CreateShareableRegionWindow.xcodeproj` in Xcode, select the **CreateShareableRegionWindow** scheme, choose **My Mac**, and run the application.

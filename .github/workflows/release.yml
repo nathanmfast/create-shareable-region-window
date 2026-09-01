@@ -95,14 +95,8 @@ jobs:
 
       - name: Package application
         run: |
-          mkdir -p artifacts
           app_path="$RUNNER_TEMP/DerivedData/Build/Products/Release/CreateShareableRegionWindow.app"
-          test -d "$app_path"
-          ditto \
-            -c \
-            -k \
-            --sequesterRsrc \
-            --keepParent \
+          bash macos/scripts/package-app.sh \
             "$app_path" \
             artifacts/CreateShareableRegionWindow-macOS.zip
 
@@ -147,10 +141,23 @@ jobs:
             release_options+=(--prerelease)
           fi
 
+          release_notes=$(cat <<'EOF'
+          ## macOS installation
+
+          1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
+          2. Open the resulting folder and drag `CreateShareableRegionWindow.app` to **Applications**.
+          3. Try to open the app once. Because this build is unsigned, macOS will block it.
+          4. Open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway**.
+          5. Authenticate if requested, click **Open**, then grant **Screen & System Audio Recording** permission when prompted.
+
+          The ZIP also contains `INSTALL.txt` with complete installation, update, and removal instructions. Only override macOS security when you trust the download source.
+          EOF
+          )
+
           gh release create "$RELEASE_TAG" \
             release-assets/* \
             --verify-tag \
             --generate-notes \
-            --notes "The macOS ZIP is currently unsigned. On first launch, macOS requires an explicit override in System Settings → Privacy & Security, followed by Screen Recording permission." \
+            --notes "$release_notes" \
             --title "Create Shareable Region Window $RELEASE_TAG" \
             "${release_options[@]}"

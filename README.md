@@ -6,7 +6,21 @@ Create Shareable Region Window turns a selected rectangle of the desktop into a 
 
 Download the latest builds from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes portable x64 and ARM64 Windows packages, an unsigned universal macOS application, generated release notes, and SHA-256 checksums.
 
-On Windows, extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required. On macOS, extract `CreateShareableRegionWindow-macOS.zip`, move the `.app` to Applications, and explicitly approve the unsigned build in **System Settings → Privacy & Security** before granting Screen Recording permission.
+On Windows, extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required.
+
+### Install on macOS
+
+The macOS download is currently unsigned and unnotarized. Only override macOS security if you downloaded it from this repository's GitHub Releases page and trust the source.
+
+1. Download and expand `CreateShareableRegionWindow-macOS.zip`.
+2. Open the resulting **Create Shareable Region Window** folder.
+3. Drag `CreateShareableRegionWindow.app` into **Applications**.
+4. Open the app from Applications once. macOS will initially block the unsigned build.
+5. Open **System Settings → Privacy & Security**, scroll to **Security**, and click **Open Anyway** next to the message about the app.
+6. Authenticate if requested and click **Open** in the confirmation dialog.
+7. Grant **Screen & System Audio Recording** permission when prompted. Quit and reopen the app if macOS requests it.
+
+The ZIP includes the same instructions in `INSTALL.txt`. Apple makes **Open Anyway** available for about one hour after the blocked launch; see [Apple's instructions for opening an app from an unknown developer](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac).
 
 The repository contains two native applications:
 
