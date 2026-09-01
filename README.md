@@ -2,6 +2,10 @@
 
 Create Shareable Region Window turns a selected rectangle of the desktop into a dedicated window that can be shared in Teams, Zoom, Meet, Discord, and other meeting applications. It provides a shareable output window; it does not create a virtual monitor.
 
+## Downloads
+
+Download the latest portable Windows build from [GitHub Releases](https://github.com/nathanmfast/create-shareable-region-window/releases/latest). Each version includes packages for x64 and ARM64 Windows, generated release notes, and SHA-256 checksums. Extract the appropriate ZIP and run `CreateShareableRegionWindow.exe`; no installation is required.
+
 The repository contains two native applications:
 
 - [`windows/`](windows/) — .NET Windows Forms and the Windows Magnification API.
@@ -87,3 +91,14 @@ To create the shareable, no-install Windows package, run:
 ```
 
 The portable ZIP is written to `artifacts/`.
+
+## Publish a release
+
+Push a semantic-version tag to GitHub to build and publish a new version automatically:
+
+```powershell
+git tag v1.0.0
+git push github v1.0.0
+```
+
+The release is published only after both Windows packages build successfully.
